@@ -8,6 +8,7 @@ interface MentorCall {
 }
 
 interface MentorCallModalProps {
+  calls: MentorCall[];
   setShowMentorCall: React.Dispatch<React.SetStateAction<boolean>>;
   mentorDescription: string;
   setMentorDescription: (value: string) => void;
@@ -21,6 +22,7 @@ interface MentorCallModalProps {
 }
 
 const MentorCallModal: React.FC<MentorCallModalProps> = ({
+  calls,
   setShowMentorCall,
   mentorDescription,
   setMentorDescription,
@@ -52,7 +54,7 @@ const MentorCallModal: React.FC<MentorCallModalProps> = ({
       );
     } else {
       // Add mode
-      const newCall = {
+      const newCall: MentorCall = {
         id: Date.now(),
         dueDate: callDate,
         description: mentorDescription,
@@ -67,6 +69,11 @@ const MentorCallModal: React.FC<MentorCallModalProps> = ({
     setShowMentorCall(false);
     setIsEditing(false);
     setEditingId(null);
+  };
+
+  // Delete handler
+  const handleDelete = (id: number) => {
+    setMentorCalls((prev) => prev.filter((call) => call.id !== id));
   };
 
   return (
@@ -87,6 +94,30 @@ const MentorCallModal: React.FC<MentorCallModalProps> = ({
           >
             &times;
           </button>
+        </div>
+
+        {/* List of Mentor Calls with Delete Button */}
+        <div className="mb-4">
+          <h4 className="font-semibold mb-2">Existing Mentor Calls</h4>
+          {calls.length === 0 ? (
+            <p className="text-gray-500 text-sm">No mentor calls yet.</p>
+          ) : (
+            <ul className="space-y-2">
+              {calls.map((call) => (
+                <li key={call.id} className="flex justify-between items-center bg-gray-100 p-2 rounded">
+                  <div>
+                    <span className="font-medium">{call.dueDate}</span>: {call.description}
+                  </div>
+                  <button
+                    onClick={() => handleDelete(call.id)}
+                    className="text-red-600 hover:text-red-800 px-2"
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         {/* Inputs */}
@@ -140,4 +171,3 @@ const MentorCallModal: React.FC<MentorCallModalProps> = ({
 };
 
 export default MentorCallModal;
-cd map

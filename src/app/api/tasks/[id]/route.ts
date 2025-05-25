@@ -13,8 +13,11 @@ export async function PATCH(request: NextRequest, {params}: {params: {id: string
             return NextResponse.json({error: "task not found"}, {status: 404})
         }
         return NextResponse.json(update)
-    } catch (error : any) {
-        return NextResponse.json({error: error.message}, {status: 400})        
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return NextResponse.json({error: error.message}, {status: 400});
+        }
+        return NextResponse.json({error: "An unknown error occurred"}, {status: 400});
     }
 }
 
@@ -27,9 +30,11 @@ export async function DELETE({params}:{params : {id: string}}){
         if(!deletedTask){
             return NextResponse.json({error: "Task not found"}, {status:404})
         }
-
-        return NextResponse.json({message: "Task Deleted Successfully"})
-    } catch (error: any) {
-        return NextResponse.json({error: error.message}, {status: 400})
+        return NextResponse.json(deletedTask);
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return NextResponse.json({error: error.message}, {status: 400});
+        }
+        return NextResponse.json({error: "An unknown error occurred"}, {status: 400});
     }
 }

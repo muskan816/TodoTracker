@@ -11,8 +11,11 @@ export async function POST(request: NextRequest) {
             taskName, description,dueDate,priority
         })
         return NextResponse.json(newTask, {status: 201})
-    } catch (error: any) {
-        return NextResponse.json({error: error.message},{status : 400})
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return NextResponse.json({error: error.message},{status : 400})
+        }
+        return NextResponse.json({error: "An unknown error occurred"},{status : 400})
     }
 }
 

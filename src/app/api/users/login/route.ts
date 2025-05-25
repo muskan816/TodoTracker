@@ -39,8 +39,12 @@ export async function GET(request: NextRequest){
             maxAge: 24 * 60 * 60 * 1000,
         })
         return response
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.log("error during login", error)
-        return NextResponse.json({error: error.message},{status: 400})
+        let errorMessage = "An unknown error occurred";
+        if (error instanceof Error) {
+            errorMessage = error.message;
+        }
+        return NextResponse.json({error: errorMessage},{status: 400})
     }
 }

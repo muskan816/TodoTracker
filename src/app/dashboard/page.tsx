@@ -11,9 +11,9 @@ import EditTask from "@/components/EditTask";
 import TodayTasks from "@/components/Today";
 import Completed from "@/components/Completed";
 import MentorCallModal from "@/components/MentorCallModal";
-import MentorCalls from "@/components/MentorCalls";
+import MentorCallsTab from "@/components/MentorCalls";
 
-interface Task {
+export interface Task {
   _id: string;
   taskName: string;
   description: string;
@@ -48,7 +48,6 @@ const Page = () => {
 
   const [errors, setErrors] = useState({ taskName: false, priority: false });
   const [search, setSearch] = useState("");
-  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [status, setStatus] = useState("");
   const [sort, setSort] = useState("");
 
@@ -244,10 +243,9 @@ const Page = () => {
             tasks={tasks}
             search={search}
             setSearch={setSearch}
-            setFilteredTasks={setFilteredTasks}
+            setFilteredTasks={setTasks} // Pass setTasks or create a filteredTasks state if needed
           />
         )}
-
         {activeLink === "allTasks" && (
           <Filter
             status={status}
@@ -267,14 +265,7 @@ const Page = () => {
       >
         {activeLink === "today" ? (
           <TodayTasks
-            tasks={tasks.map((task) => ({
-              id: task._id,
-              name: task.taskName,
-              description: task.description,
-              dueDate: task.dueDate,
-              priority: task.priority,
-              completed: task.completed,
-            }))}
+            tasks={tasks}
             toggleComplete={toggleComplete}
             handleEdit={handleEdit}
             handleDelete={handleDelete}
@@ -282,7 +273,7 @@ const Page = () => {
         ) : activeLink === "completed" ? (
           <Completed
             tasks={tasks.map((task) => ({
-              id: task._id,
+              id: Number(task._id),
               name: task.taskName,
               completed: task.completed,
               dueDate: task.dueDate,
@@ -294,19 +285,20 @@ const Page = () => {
                   : "Low",
               description: task.description,
             }))}
-            toggleComplete={toggleComplete}
-            handleEdit={handleEdit}
-            handleDelete={(id: string) => handleDelete(id)}
+            toggleComplete={(id: number) => {
+              const stringId = String(id);
+              toggleComplete(stringId);
+            }}
+            handleEdit={(task) => {
+              // Convert the shape back to Task for handleEdit
+              const found = tasks.find((t) => t._id === String(task.id));
+              if (found) handleEdit(found);
+            }}
+            handleDelete={(id: number) => handleDelete(String(id))}
             clearCompletedTasks={clearCompletedTasks}
           />
         ) : isMentorCallTab ? (
-          <MentorCalls
-            calls={mentorCalls.map((call) => ({
-              ...call,
-              onDelete: (id: number) =>
-                setMentorCalls((prev) => prev.filter((c) => c.id !== id)),
-            }))}
-          />
+          <MentorCallsTab/>
         ) : getFilteredTasks().length === 0 ? (
           <div className="flex justify-center mt-16 text-gray-500 italic col-span-full">
             <p>
@@ -413,11 +405,17 @@ const Page = () => {
 
       {showMentorCall && (
         <MentorCallModal
+          calls={mentorCalls}
           setShowMentorCall={setShowMentorCall}
           mentorDescription={mentorDescription}
           setMentorDescription={setMentorDescription}
           setMentorCalls={setMentorCalls}
           dueDate={dueDate}
+          setDueDate={setDueDate}
+          isEditing={false}
+          editingId={null}
+          setIsEditing={() => {}}
+          setEditingId={() => {}}
         />
       )}
     </div>

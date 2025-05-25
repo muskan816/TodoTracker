@@ -1,14 +1,8 @@
 import { useEffect } from "react";
 import { IoSearchOutline } from "react-icons/io5";
+// import the Task type from its definition file
+import type { Task } from "@/app/dashboard/page";
 
-interface Task {
-  id: number;
-  name: string;
-  description: string;
-  dueDate: string;
-  priority: string;
-  completed: boolean;
-}
 
 interface SearchProps {
   tasks: Task[];

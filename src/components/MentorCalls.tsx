@@ -10,19 +10,39 @@ const MentorCallsTab = () => {
   const [showMentorCall, setShowMentorCall] = useState(false);
   const [mentorDescription, setMentorDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
 
+  // Edit handler
   const handleEdit = (call: { id: number; dueDate: string; description: string }) => {
+    setEditingId(call.id);
     setMentorDescription(call.description);
     setDueDate(call.dueDate);
-    setIsEditing(true);
-    setEditingId(call.id);
     setShowMentorCall(true);
   };
 
+  // Save handler for modal (edit or add)
+  const handleSave = (desc: string, date: string) => {
+    if (editingId !== null) {
+      setMentorCalls((prev) =>
+        prev.map((call) =>
+          call.id === editingId ? { ...call, description: desc, dueDate: date } : call
+        )
+      );
+    } else {
+      setMentorCalls((prev) => [
+        ...prev,
+        { id: Date.now(), dueDate: date, description: desc },
+      ]);
+    }
+    setEditingId(null);
+    setMentorDescription("");
+    setDueDate("");
+    setShowMentorCall(false);
+  };
+
+  // Delete handler
   const handleDelete = (id: number) => {
-      setMentorCalls((prev) => prev.filter((call) => call.id !== id));
+    setMentorCalls((prev) => prev.filter((call) => call.id !== id));
   };
 
   return (
@@ -32,10 +52,10 @@ const MentorCallsTab = () => {
       {/* Add Note Button */}
       <button
         onClick={() => {
-          setShowMentorCall(true);
-          setIsEditing(false);
+          setEditingId(null);
           setMentorDescription("");
           setDueDate("");
+          setShowMentorCall(true);
         }}
         className="bg-blue-600 text-white px-4 py-2 rounded-md mb-4 hover:bg-blue-700"
       >
@@ -46,11 +66,11 @@ const MentorCallsTab = () => {
       {mentorCalls.length === 0 ? (
         <p className="text-gray-500">No mentor call notes added yet.</p>
       ) : (
-        <ul className="space-y-3 max-w-sm">
+        <ul className="space-y-3">
           {mentorCalls.map((call) => (
             <li
               key={call.id}
-              className="border p-3 rounded-md bg-gray-50 shadow-sm flex justify-between items-start"
+              className="border p-3 rounded-md bg-gray-50 shadow-sm flex justify-between items-center"
             >
               <div>
                 <p className="text-sm text-gray-600 mb-1">
@@ -59,14 +79,20 @@ const MentorCallsTab = () => {
                 <p>{call.description}</p>
               </div>
               <div className="flex gap-2">
-                <FiEdit
-                  className="cursor-pointer text-blue-600 hover:text-blue-800"
+                <button
                   onClick={() => handleEdit(call)}
-                />
-                <FiTrash
-                  className="cursor-pointer text-red-600 hover:text-red-800"
+                  className="p-2 rounded hover:bg-gray-200"
+                  title="Edit"
+                >
+                  <FiEdit />
+                </button>
+                <button
                   onClick={() => handleDelete(call.id)}
-                />
+                  className="p-2 rounded hover:bg-gray-200 text-red-600"
+                  title="Delete"
+                >
+                  <FiTrash />
+                </button>
               </div>
             </li>
           ))}
@@ -79,13 +105,19 @@ const MentorCallsTab = () => {
           setShowMentorCall={setShowMentorCall}
           mentorDescription={mentorDescription}
           setMentorDescription={setMentorDescription}
-          setMentorCalls={setMentorCalls}
+          setMentorCalls={() => {
+            // Save logic for modal
+            handleSave(mentorDescription, dueDate);
+          }}
           dueDate={dueDate}
           setDueDate={setDueDate}
-          isEditing={isEditing}
+          isEditing={editingId !== null}
           editingId={editingId}
-          setIsEditing={setIsEditing}
+          setIsEditing={(val) => {
+            if (!val) setEditingId(null);
+          }}
           setEditingId={setEditingId}
+          calls={mentorCalls}
         />
       )}
     </div>
