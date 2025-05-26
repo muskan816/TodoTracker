@@ -1,23 +1,10 @@
 "use client";
 import { FiEdit, FiTrash } from "react-icons/fi";
+import type {Task} from "@/app/dashboard/page"
 
 interface CompletedProps {
-  tasks: { 
-    id: number; 
-    name: string; 
-    completed: boolean; 
-    dueDate: string; 
-    priority: "Low" | "Medium" | "High"; 
-    description: string; 
-  }[];
-  handleEdit: (task: { 
-    id: number; 
-    name: string; 
-    completed: boolean; 
-    dueDate: string; 
-    priority: "Low" | "Medium" | "High"; 
-    description: string; 
-  }) => void;
+  tasks: Task[]
+  handleEdit: (task: Task) => void;
   toggleComplete: (id: number) => void;
   handleDelete: (id: number) => void;
   clearCompletedTasks: () => void;
@@ -45,7 +32,7 @@ const Completed: React.FC<CompletedProps> = ({
       <div className="flex flex-wrap gap-4 mt-8">
         {completed.map((task) => (
           <div
-            key={task.id}
+            key={task._id}
             className={`${
               task.completed ? "border-green-400" : "border-red-400"
             } w-full max-w-xs bg-blue-950 rounded-xl p-4 text-white shadow-sm border-l-4`}
@@ -56,7 +43,7 @@ const Completed: React.FC<CompletedProps> = ({
                   <input
                     type="checkbox"
                     checked={task.completed}
-                    onChange={() => toggleComplete(task.id)}
+                    onChange={() => toggleComplete(Number(task._id))}
                     className="accent-blue-600 w-4 h-4"
                   />
                   <h3
@@ -64,7 +51,7 @@ const Completed: React.FC<CompletedProps> = ({
                       task.completed ? "line-through" : "none"
                     } font-semibold text-base`}
                   >
-                    {task.name}
+                    {task.taskName}
                   </h3>
                 </div>
 
@@ -100,7 +87,7 @@ const Completed: React.FC<CompletedProps> = ({
                 />
                 <FiTrash
                   className="cursor-pointer text-gray-300 hover:text-white"
-                  onClick={() => handleDelete(task.id)}
+                  onClick={() => handleDelete(Number(task._id))}
                 />
               </div>
             </div>

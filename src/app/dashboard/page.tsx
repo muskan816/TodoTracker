@@ -272,28 +272,12 @@ const Page = () => {
           />
         ) : activeLink === "completed" ? (
           <Completed
-            tasks={tasks.map((task) => ({
-              id: Number(task._id),
-              name: task.taskName,
-              completed: task.completed,
-              dueDate: task.dueDate,
-              priority:
-                task.priority === "Low" ||
-                task.priority === "Medium" ||
-                task.priority === "High"
-                  ? task.priority
-                  : "Low",
-              description: task.description,
-            }))}
+            tasks={tasks}
             toggleComplete={(id: number) => {
               const stringId = String(id);
               toggleComplete(stringId);
             }}
-            handleEdit={(task) => {
-              // Convert the shape back to Task for handleEdit
-              const found = tasks.find((t) => t._id === String(task.id));
-              if (found) handleEdit(found);
-            }}
+            handleEdit={handleEdit}
             handleDelete={(id: number) => handleDelete(String(id))}
             clearCompletedTasks={clearCompletedTasks}
           />
