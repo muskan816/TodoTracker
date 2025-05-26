@@ -22,19 +22,22 @@ export async function PATCH(request: NextRequest, {params}: {params: {id: string
 }
 
 //delete by id
-export async function DELETE({params}:{params : {id: string}}){
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
-        await connect()
-        const deletedTask = await Task.findByIdAndDelete(params.id)
+        await connect();
+        const deletedTask = await Task.findByIdAndDelete(params.id);
 
-        if(!deletedTask){
-            return NextResponse.json({error: "Task not found"}, {status:404})
+        if (!deletedTask) {
+            return NextResponse.json({ error: "Task not found" }, { status: 404 });
         }
         return NextResponse.json(deletedTask);
     } catch (error: unknown) {
         if (error instanceof Error) {
-            return NextResponse.json({error: error.message}, {status: 400});
+            return NextResponse.json({ error: error.message }, { status: 400 });
         }
-        return NextResponse.json({error: "An unknown error occurred"}, {status: 400});
+        return NextResponse.json({ error: "An unknown error occurred" }, { status: 400 });
     }
 }

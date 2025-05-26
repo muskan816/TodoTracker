@@ -22,7 +22,7 @@ const Search = ({
       search.trim() === ""
         ? tasks
         : tasks.filter((task) =>
-            task.name.toLowerCase().includes(search.toLowerCase())
+            task.taskName.toLowerCase().includes(search.toLowerCase())
           );
     setFilteredTasks(filtered);
   }, [search, tasks, setFilteredTasks]);

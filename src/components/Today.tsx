@@ -50,7 +50,7 @@ const TodayTasks = ({
         <div className="flex flex-wrap gap-4 mt-8">
         {todayTasks.map((task) => (
           <div
-            key={task.id}
+            key={task._id}
             className={`${
               task.completed ? "border-green-400" : "border-red-400"
             } w-full max-w-xs bg-blue-950 rounded-xl p-4 text-white shadow-sm border-l-4`}
@@ -61,7 +61,7 @@ const TodayTasks = ({
                   <input
                     type="checkbox"
                     checked={task.completed}
-                    onChange={() => toggleComplete(task.id)}
+                    onChange={() => toggleComplete(task._id)}
                     className="accent-blue-600 w-4 h-4"
                   />
                   <h3
@@ -107,7 +107,7 @@ const TodayTasks = ({
                 />
                 <FiTrash
                   className="cursor-pointer text-gray-300 hover:text-white"
-                  onClick={() => handleDelete(task.id)}
+                  onClick={() => handleDelete(task._id)}
                 />
               </div>
             </div>

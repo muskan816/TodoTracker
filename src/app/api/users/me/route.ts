@@ -13,6 +13,10 @@ export async function GET(request: NextRequest){
             data: user
         })
     } catch (error) {
-        return NextResponse.json({error: error.message},{status: 400})
+        let errorMessage = "An unknown error occurred";
+        if (error instanceof Error) {
+            errorMessage = error.message;
+        }
+        return NextResponse.json({error: errorMessage},{status: 400})
     }
 }
